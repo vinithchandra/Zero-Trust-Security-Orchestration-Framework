@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sysdig-agent
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: sysdig-agent
+  template:
+    metadata:
+      labels:
+        app: sysdig-agent
+    spec:
+      containers:
+        - name: sysdig-agent
+          image: sysdig/agent:latest
+          env:
+            - name: SYSDIG_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: sysdig-agent
+                  key: api-token
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
